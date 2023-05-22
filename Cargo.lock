@@ -3,6 +3,17 @@
 version = 3
 
 [[package]]
+name = "address-token-miner"
+version = "0.1.0"
+dependencies = [
+ "hex",
+ "hex-literal",
+ "rand",
+ "structopt",
+ "tiny-keccak",
+]
+
+[[package]]
 name = "ansi_term"
 version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -195,17 +206,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ca3129af7b92a17112d59ad498c6f81eaf463253766b90396d39ea7a39d6613c"
 dependencies = [
  "rand_core",
-]
-
-[[package]]
-name = "solidity-selector-miner"
-version = "0.1.0"
-dependencies = [
- "hex",
- "hex-literal",
- "rand",
- "structopt",
- "tiny-keccak",
 ]
 
 [[package]]

@@ -1,5 +1,5 @@
 [package]
-name = "solidity-selector-miner"
+name = "address-token-miner"
 version = "0.1.0"
 authors = ["Anton Bukov <k06aaa@gmail.com>"]
 edition = "2018"
