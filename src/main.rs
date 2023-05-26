@@ -88,7 +88,7 @@ fn main() {
                     println!(
                         "Found address 0x{} with magic 0x{} in {} seconds after {}M iterations",
                         hex::encode(&res[12..32]),
-                        hex::encode(&buffer[0..12]),
+                        hex::encode(&buffer[0..16]),
                         first.elapsed().as_secs(),
                         (index * args_threads as u64 / 1000) as f64 / 1000.0
                     );
