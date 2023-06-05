@@ -20,11 +20,16 @@ fn main() {
 
     let mut data = [0u8; 32];
     let wallet = args.wallet.strip_prefix("0x").unwrap_or(&args.wallet);
-    data[16..32].copy_from_slice(&hex::decode(wallet).unwrap().as_slice()[4..]);
+    let mut address_hasher = Keccak::v256();
+    // println!("Wallet: {:?}", &hex::decode(wallet).unwrap().as_slice());
+    address_hasher.update(&hex::decode(wallet).unwrap().as_slice());
+    address_hasher.finalize(&mut data);
+    data[0..16].copy_from_slice(&[0u8; 16]);
 
     let prehex = args.prehex.strip_prefix("0x").unwrap_or(&args.prehex).to_string();
-    let prefix = hex::decode(&prehex[0..2]).unwrap();
-    
+    let prefix = hex::decode(&prehex).unwrap();
+    // println!("Prefix: {}", prehex);
+        
     let args_threads = args.threads;
     let mut handles = vec![];
     for ti in 0..args.threads as u8 {
@@ -67,6 +72,7 @@ fn main() {
                 let mut hasher = Keccak::v256();
                 hasher.update(&[0xffu8]);
                 hasher.update(&hex!("1Add4e558Ce81fbdFD097550894CBdF37D448a9E"));
+                // hasher.update(&hex!("5FbDB2315678afecb367f032d93F642f64180aa3"));
                 hasher.update(&buffer);
                 hasher.update(&hex!("21c35dbe1b344a2488cf3321d6ce542f8e9f305544ff09e4993a62319a497c1f"));
                 hasher.finalize(&mut res);
@@ -81,8 +87,7 @@ fn main() {
                 hasher2.update(&[0x01u8]);
                 hasher2.finalize(&mut res);
 
-                if (res[12] >> 4) == prefix_clone[0] &&
-                    //(prefix_clone.len() > 1 && (res[12] & 0x0f) == prefix_clone[1]) &&
+                if  res[12] == prefix_clone[0] &&
                     hex::encode(&res[12..32]).starts_with(&prehex_clone)
                 {
                     println!(
