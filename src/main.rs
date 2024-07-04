@@ -2,7 +2,6 @@ use tiny_keccak::{Keccak, Hasher};
 use std::thread;
 use std::time::Instant;
 use structopt::StructOpt;
-use hex_literal::hex;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 extern crate hex;
@@ -14,12 +13,15 @@ struct Args {
     prehex: String,
     #[structopt(default_value = "1")]
     threads: usize,
+    #[structopt(default_value = "21c35dbe1b344a2488cf3321d6ce542f8e9f305544ff09e4993a62319a497c1f")]
+    proxy_bytecode_hash: String,
 }
 
 fn main() {
     let args = Args::from_args();
 
     let deployer = hex::decode(args.deployer.strip_prefix("0x").unwrap_or(&args.deployer)).unwrap();
+    let proxy_bytecode_hash = hex::decode(args.proxy_bytecode_hash.strip_prefix("0x").unwrap_or(&args.proxy_bytecode_hash)).unwrap();
 
     let mut data = [0u8; 32];
     let wallet = args.wallet.strip_prefix("0x").unwrap_or(&args.wallet);
@@ -39,6 +41,7 @@ fn main() {
         let prehex_clone = prehex.clone();
         let prefix_clone = prefix.clone();
         let deployer_clone = deployer.clone();
+        let proxy_bytecode_hash_clone = proxy_bytecode_hash.clone();
         handles.push(Some(thread::spawn(move || {
             let random = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_millis();
 
@@ -78,7 +81,7 @@ fn main() {
                 // hasher.update(&hex!("5FbDB2315678afecb367f032d93F642f64180aa3"));
                 hasher.update(&deployer_clone);
                 hasher.update(&buffer);
-                hasher.update(&hex!("21c35dbe1b344a2488cf3321d6ce542f8e9f305544ff09e4993a62319a497c1f"));
+                hasher.update(&proxy_bytecode_hash_clone);
                 hasher.finalize(&mut res);
 
                 // final_addr = '0x' + Web3.solidity_keccak(
